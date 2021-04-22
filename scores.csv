@@ -1,4 +1,4 @@
-person,dish
-arthur,0
-johan,0
-sylvain,0
+person,dish,other
+arthur,0,0
+johan,0,1
+sylvain,2,0

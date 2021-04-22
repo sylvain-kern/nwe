@@ -4,16 +4,16 @@
     while (($row = fgetcsv($log, 0, ",")) !== FALSE){
         switch($row[0]) {
             case "johan":
-                    $johan_pts = $row[1];
-                    $jsave = $row[2];
+                    $johan_pts = $row[2];
+                    $jsave = $row[1];
                 break;
             case "arthur":
-                    $arthur_pts = $row[1];
-                    $asave = $row[2];
+                    $arthur_pts = $row[2];
+                    $asave = $row[1];
                 break;
             case "sylvain":
-                    $sylvain_pts = $row[1];
-                    $ssave = $row[2];
+                    $sylvain_pts = $row[2];
+                    $ssave = $row[1];
                 break;
         }
     }
@@ -40,9 +40,9 @@
                 // save the changes in the log file
                 $data = array(
                     "person,dish,other",
-                    "arthur,".$update["Arthur"].",".$asave,
-                    "johan,".$update["Johan"].",".$jsave,
-                    "sylvain,".$update["Sylvain"].",".$ssave,
+                    "arthur,".$asave.",".$update["Arthur"],
+                    "johan,".$jsave.",".$update["Johan"],
+                    "sylvain,".$ssave.",".$update["Sylvain"],
                 );
                 $write_log = fopen('scores.csv', 'w');
                 foreach ( $data as $line ) {
@@ -68,7 +68,7 @@
 <html>
 
 <head>
-    <title>&#x1F6BF Dish Dissipator</title>
+    <title>&#x1F6BF Other</title>
     <!-- <link rel="stylesheet" type="text/css" href="/artos/style.css" media="screen"/> -->
     <link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
 </head>
@@ -77,13 +77,13 @@
     <div id="pane">
         <header>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <h1> <a href = "" > Dish equalizer </a> </h1>
+            <h1> <a href = "" > Other </a> </h1>
         </header>
         <!-- <form method="POST" action="/artos/index.php"> -->
-        <form method="POST" action="dishes.php">
+        <form method="POST" action="other.php">
             <p>
             <fieldset>
-                <legend>Who washed the dishes ?</legend>
+                <legend>Who did other ?</legend>
                 <input type="radio" name='person' value='Johan' id='Johan'>
                 <label for="Johan">Johan</label><br/>
                 <input type="radio" name='person' value='Sylvain' id='Sylvain'>
@@ -96,7 +96,7 @@
             </p>
             <p>
             <fieldset>
-                <legend>What type of dishes ?</legend>
+                <legend>What type of other ?</legend>
                 <input type="radio" name='dishes' value='1' id="Breakfast">
                 <label for="Breakfast">Breakfast</label><br/>
                 <input type="radio" name='dishes' value='2' id="Meal">
