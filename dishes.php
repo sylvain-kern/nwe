@@ -1,6 +1,19 @@
 <?php
-
-    $lines = file("scores.txt");
+    // read the score sheet
+    $log = fopen("scores.csv", "r");
+    while (($row = fgetcsv($log, 0, ",")) !== FALSE){
+        switch($row[0]) {
+            case "johan":
+                    $johan_pts = $row[1];
+                break;
+            case "arthur":
+                    $arthur_pts = $row[1];
+                break;
+            case "sylvain":
+                    $sylvain_pts = $row[1];
+                break;
+        }
+    }
     $url = file("url.txt");
     if(isset($_POST["submit"])){
         // test if any information is missing
@@ -12,7 +25,7 @@
         else{
             if($_POST["person"]!="Guest"){
                 // initialize variables
-                $previous = array('Johan' => (int) $lines[2], 'Sylvain' => (int) $lines[4], 'Arthur' => (int) $lines[6]);
+                $previous = array('Johan' => (int) $johan_pts, 'Sylvain' => (int) $sylvain_pts, 'Arthur' => (int) $arthur_pts);
                 $update = $previous;
                 // update the score
                 $update[$_POST["person"]] = $update[$_POST["person"]] + $_POST["dishes"];
@@ -22,13 +35,19 @@
                     $update[$name] = $update[$name] - $min;
                 }
                 // save the changes in the log file
-                $lines[2] = $update['Johan'] . "\n";
-                $lines[4] = $update['Sylvain'] . "\n";
-                $lines[6] = $update['Arthur'] . "\n";
+                $data = array(
+                    "person,dish",
+                    "arthur,".$update["Arthur"],
+                    "johan,".$update["Johan"],
+                    "sylvain,".$update["Sylvain"],
+                );
+                $write_log = fopen('scores.csv', 'w');
+                foreach ( $data as $line ) {
+                    $cols = explode(",", $line);
+                    fputcsv($write_log, $cols);
+                }
+                fclose($write_log);
             }
-            $lines[0] = $_POST["person"] . "\n";
-            $lines[7] = date('Y/m/d H:i:s');
-            file_put_contents("scores.txt", $lines);
             // reward display
             $dir = $url[array_rand($url)];
             if($_POST["person"]=="Guest"){

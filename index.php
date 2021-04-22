@@ -16,16 +16,27 @@
         <p>
         <!-- first display the scores -->
         <?php
-            echo "Last dish: ";
-            $last = file("scores.txt");
-            echo "$last[0] <br> Date: $last[7]";
+            $log = fopen("scores.csv", "r");
+            while (($row = fgetcsv($log, 0, ",")) !== FALSE){
+                switch($row[0]) {
+                    case "johan":
+                            $johan_pts = $row[1];
+                        break;
+                    case "arthur":
+                            $arthur_pts = $row[1];
+                        break;
+                    case "sylvain":
+                            $sylvain_pts = $row[1];
+                        break;
+                }
+            }
         ?>
         </p>
         <p>
         <?php
             echo "Scores: <br>";
             // last scores of each
-            $scores = array("johan" => $last[2], "sylvain" => $last[4], "arthur" => $last[6]);
+            $scores = array("johan" => $johan_pts, "sylvain" => $sylvain_pts, "arthur" => $arthur_pts);
             // by default, cloud
             $smiles = array("johan" => "&#x26C5", "sylvain" => "&#x26C5", "arthur" => "&#x26C5");
             // if the scores are balanced as everything should be, put sun emoji
