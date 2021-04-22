@@ -17,7 +17,6 @@
                 break;
         }
     }
-    $url = file("url.txt");
     if(isset($_POST["submit"])){
         // test if any information is missing
         if(!isset($_POST["person"]) || (!isset($_POST["dishes"]) && $_POST["person"]!="Guest")){
@@ -52,14 +51,7 @@
                 fclose($write_log);
             }
             // reward display
-            $dir = $url[array_rand($url)];
-            if($_POST["person"]=="Guest"){
-                echo "<div id=pane> <center> Thanks a lot, lovely guest !<br> </center>";
-            }
-            else{
-                echo "<div id=pane> <center> Thanks " . $_POST['person'] . "!<br> </center>";
-            }
-            echo "<center> <img src=\"$dir\" class='responsive-image'> </center> </div>";
+            header('location: reward.php');
         }
     }
 ?>
