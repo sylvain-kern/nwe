@@ -1,6 +1,6 @@
 <?php
     include 'utils.php';
-    $password = 'caonut';
+    $password = 'password';
     $data = json_decode(file_get_contents('data/scores.json'), true);
     $config = json_decode(file_get_contents('data/config.json'), true);
     $rates = json_decode(file_get_contents('data/trading_rates.json'), true);

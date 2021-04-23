@@ -2,9 +2,66 @@
 
 This app aims to balance tedious but necessery tasks among roommates, like dish washing or dust cleaning.
 
-## How does it work ?
+![home page](./readme_assets/home.png)
+
+# How does it work ?
 
 Each roomate has a score for each task. When a task is performed, all roommates' scores relative to this task are updated.
-If one prefers a task compared to another, a score trading system between tasks is implemented.
-
+A trading system between tasks is implemented, so one can trade point from one task to another given a trading rate.
 Ater a task is performed, a reward is given.
+
+## Install the app on your system
+
+This app is designed to be used in a web server. However, you can use it localy with tools like `Wampserver64` on Windows.
+
+## Getting started
+
+### Create the dataset :
+
+If data have not been cleared, you can `Go to admin page` then select `Reset All` and confirm it.
+
+![admin page](./readme_assets/admin.png)
+
+By default, the password is `password`, but you can change it by editing the `admin.php` file, third line. It is needed to add new roommates or new tasks. To do so, just right the name of the roommate/task in the right area and click `submit`. A confirmation message will be displayed.
+
+***Note: the scores will only be displayed if there are at least two users and one task.*** 
+
+![home error](./readme_assets/home_error.png)
+
+### Move to a task
+
+In order to select a task, one just has to click on the wanted task and click on `Go!`.
+
+### Configure the tasks
+
+Each task can have different types, like the task `dishes` can have two types `breakfast` and `meal`. By default, the newly created task has one type `default` corresponding to one point. One can modify, add and remove types of a given task when surfing on the page of the said task:
+* click on `configuration mode` ;
+* the settings will appear, along with all the options ;
+* when a change is made, the data is immediately updated.
+
+![home error](./readme_assets/task_settings.png)
+
+When a task has multiple types, they can be selected the same way as the user who did the task.
+
+***Note: for each task, the user can be a `Guest`, who will receive a reward but not affect the scores.***
+
+### Trade points
+
+Any user can decide to transfer his points from one task to another. To do so, he must click on `Enter trade page`, then select the user who wants to trade, the task from which his points will be taken, and the task to which his points will be added. Click on `Confirm trade` to validate, and all the scores will be updated.
+
+![trade home](./readme_assets/trade_home.png)
+
+Below the `Confirm trade` button are shown the trading rates. By default, all of them are equals to one. It means that one point of _task A_ is equivalent to one point of _task B_.
+To change these rates, one has to click on `configuration mode` to open the settings. Here, one has to select the rate to be changed, and insert the new value before clicking on `Modify`.
+
+![trade home](./readme_assets/trade_rates.png)
+
+In this example, one point of `task2` is equivalent to two points of `task1` ; it means that if a user trades two points from `task2` to `task1`, he will lose two points from `task2` and gain four in `task1`.
+
+***Note: if one changes a rate from _task B_ to _task A_, then the inverse rated (from _task A_ to _task B_) will be automaticaly inserted.***
+
+### Reward ###
+
+In order to reward the user who performed a task, he will be redirected (after submitting his task) to a new page which displays a picture. This picture is found from its url, which is randomly chosen from the list `data/url.txt`. By default, we provided sixty url's of cinema actress we like ; feel free to put whatever url you'd like.
+
+The new scores are also displayed under the reward.

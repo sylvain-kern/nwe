@@ -52,9 +52,10 @@
         $from_mod = $_POST['rate_from'];
         $to_mod = $_POST['rate_to'];
         if($from_mod != $to_mod){
-            $new_rate = $_POST['new_rate'];
+            $new_rate = (float) $_POST['new_rate'];
             if(is_numeric($new_rate) &&  ($new_rate > 0)){
                 $trading_rates[$from_mod][$to_mod] = $new_rate;
+                $trading_rates[$to_mod][$from_mod] = 1/$new_rate;
                 file_put_contents('data/trading_rates.json', json_encode($trading_rates));
             }
             else{
