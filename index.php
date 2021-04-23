@@ -109,5 +109,12 @@
             </ul>
         </nav>
     </div>
+    <div id='pane'>
+        <nav>
+            <ul>
+                <li><a href="admin.php"> Enter admin page </a></li>
+            </ul>
+        </nav>
+    </div>
 </body>
 </html>
