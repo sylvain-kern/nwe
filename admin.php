@@ -1,27 +1,35 @@
 <?php
-    $file = 'scores.json';
+    include 'utils.php';
     $password = 'caonut';
+    $data = json_decode(file_get_contents('data/scores.json'), true);
+    $config = json_decode(file_get_contents('data/config.json'), true);
+    $count = 0;
+    foreach($data as $user => $scores){
+        $count += 1;
+    }
+    $nbtasks = count($config);
     if(isset($_POST["submit"])){
         // if there is a password and it is the good one (as a confirmation process)
         if(isset($_POST["password"]) && $_POST["password"] == $password){
             echo "<div id='pane'> <center> Password OK: <br>";
-            if(strcmp($_POST["new_name"],'') != 0){
-                $user = $_POST["new_name"];
-                $data = json_decode(file_get_contents($file), true);
-                $data[$user] = $data["default"];
-                file_put_contents($file, json_encode($data));
-                echo "New user ".$user." added ! <br>";
-            }
             if(strcmp($_POST["new_task"],'') != 0){
                 $task = $_POST["new_task"];
-                $data = json_decode(file_get_contents($file), true);
                 $new_data = array();
                 foreach($data as $mate => $val){
+                    // assign a score of zero for each roommate
                     $val[$task] = 0;
                     $new_data[$mate] = $val;
                 }
-                file_put_contents($file, json_encode($new_data));
+                $config[$task] = array();
+                file_put_contents('data/scores.json', json_encode($new_data));
+                file_put_contents('data/config.json', json_encode($config, JSON_FORCE_OBJECT));
                 echo "New task ".$task." added for all users ! <br>";
+            }
+            if(strcmp($_POST["new_name"],'') != 0){
+                $user = $_POST["new_name"];
+                $data[$user] = $data["default"];
+                file_put_contents('data/scores.json', json_encode($data, JSON_FORCE_OBJECT));
+                echo "New user ".$user." added ! <br>";
             }
             echo "</center> </div>";
         }
@@ -49,11 +57,23 @@
 
         <form method='POST' action='admin.php'>
             <p> Admin password :<input type='text' name='password' /></p>
-            <p> Add a new roommate :<input type='text' name='new_name' /></p>
+        <p> Add a new roommate :<input type='text' name='new_name' /></p>
             <p> Add a new task :<input type='text' name='new_task' /></p>
-            <p><input class='buttont' type='submit' name='submit' value='Validate' /></p>
+            <p><input class='button' type='submit' name='submit' value='Submit' /></p>
         </form>
 
+        <footer>
+            <nav>
+                <ul>
+                    <li><a href="index.php"> Return to homepage </a></li>
+                </ul>
+            </nav>
+        </footer>
+        
     </div>
 </body>
 </html>
+
+<?php
+    update_tasks_in_scores('data/config.json', 'data/scores.json');
+?>

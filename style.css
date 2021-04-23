@@ -113,4 +113,12 @@ footer nav ul li a:hover{
 table td {
     vertical-align: text-bottom;
     padding-right: 1em;
+    text-align: center;
+}
+
+.hidden{
+    visibility:"hidden";
+}
+.visible{
+    visibility:"visible";
 }

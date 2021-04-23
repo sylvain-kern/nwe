@@ -1,8 +1,20 @@
+<?php
+    include 'utils.php';
+    $tasks = get_tasks('data/config.json');
+    if(file_get_contents('data/selected_task.txt') != ''){
+        file_put_contents('data/selected_task.txt', '');
+    }
+    if(isset($_POST['go_to_task']) && isset($_POST['task_name'])){
+        file_put_contents('data/selected_task.txt', $_POST['task_name']);
+        header('location: task.php');
+    }
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>&#x1F6BF Roomate equalizer</title>
+    <title>&#x1F6BF Roommate equalizer</title>
     <!-- <link rel="stylesheet" type="text/css" href="/artos/style.css" media="screen"/> -->
     <link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
 </head>
@@ -11,103 +23,31 @@
     <div id="pane">
         <header>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <h1> <a href = "" > Roomate equalizer </a> </h1>
+            <h1> <a href = "" > Roomm   ate equalizer </a> </h1>
         </header>
         <p>
-        <!-- first display the scores -->
         <?php
-            $log = fopen("scores.csv", "r");
-            $data = array(
-                'johan' => array("dishes" => 0, "other" => 0),
-                'arthur' => array("dishes" => 0, "other" => 0),
-                'sylvain' => array("dishes" => 0, "other" => 0),
-            );
-            while (($row = fgetcsv($log, 0, ",")) !== FALSE){
-                switch($row[0]) {
-                    case "johan":
-                        $data["johan"]["dishes"] = $row[1];
-                        $data["johan"]["other"] = $row[2];
-                        break;
-                    case "arthur":
-                        $data["arthur"]["dishes"] = $row[1];
-                        $data["arthur"]["other"] = $row[2];
-                        break;
-                    case "sylvain":
-                        $data["sylvain"]["dishes"] = $row[1];
-                        $data["sylvain"]["other"] = $row[2];
-                        break;
-                }
-            }
+            // display the scores
+            display_scores('data/scores.json');
         ?>
         </p>
-        <p>
         <?php
-            // for the dishes
-            echo "Dishes scores: <br>";
-            // last scores of each
-            $scores = array("johan" => $data["johan"]["dishes"], "sylvain" => $data["sylvain"]["dishes"], "arthur" => $data["arthur"]["dishes"]);
-            // by default, cloud
-            $smiles = array("johan" => "&#x26C5", "sylvain" => "&#x26C5", "arthur" => "&#x26C5");
-            // if the scores are balanced as everything should be, put sun emoji
-            if(count(array_unique($scores)) === 1){
-                foreach($smiles as $smile){
-                    $smile = "&#x1F31E";
+            if(count($tasks)>0){
+                // Task selection
+                echo "<form method='POST' action='index.php'>";
+                echo "<p> <fieldset> <legend> Choose your task:</legend>";
+                foreach($tasks as $task){
+                    echo "<input type='radio' name='task_name' value='".$task."' id='".$task."'>";
+                    echo "<label for='".$task."'> ".$task." </label><br/>";
                 }
+                echo "</fieldset> </p>";
+                echo "<input class='button' type='submit' name='go_to_task' value='Go!'/>";
+                echo "</form>";
             }
             else{
-                $max = max($scores);
-                $min = min($scores);
-                // best score
-                foreach(array_keys($scores, $max, true) as $key){
-                    $smiles[$key] = "&#x1F31E";
-                } // worst score
-                foreach(array_keys($scores, $min, true) as $key){
-                    $smiles[$key] = "&#x1F4A9";
-                }
-            }
-            // display the scores
-            foreach(array('johan', 'sylvain', 'arthur') as $name){
-                echo "$smiles[$name] " . ucfirst($name) . " $scores[$name] <br>";
-            }
-            // for the other
-            echo "Other scores: <br>";
-            // last scores of each
-            $scores = array("johan" => $data["johan"]["other"], "sylvain" => $data["sylvain"]["other"], "arthur" => $data["arthur"]["other"]);
-            // by default, cloud
-            $smiles = array("johan" => "&#x26C5", "sylvain" => "&#x26C5", "arthur" => "&#x26C5");
-            // if the scores are balanced as everything should be, put sun emoji
-            if(count(array_unique($scores)) === 1){
-                foreach($smiles as $smile){
-                    $smile = "&#x1F31E";
-                }
-            }
-            else{
-                $max = max($scores);
-                $min = min($scores);
-                // best score
-                foreach(array_keys($scores, $max, true) as $key){
-                    $smiles[$key] = "&#x1F31E";
-                } // worst score
-                foreach(array_keys($scores, $min, true) as $key){
-                    $smiles[$key] = "&#x1F4A9";
-                }
-            }
-            // display the scores
-            foreach(array('johan', 'sylvain', 'arthur') as $name){
-                echo "$smiles[$name] " . ucfirst($name) . " $scores[$name] <br>";
+                echo '<p> No task detected, add at least one in the admin page.';
             }
         ?>
-        </p>
-        <!-- the select the task -->
-        <p> Select your task: </p>
-        <nav>
-            <ul>
-                <li><a href="dishes.php"> Dish washing </a></li>
-            </ul>
-            <ul>
-                <li><a href="other.php"> Other </a></li>
-            </ul>
-        </nav>
     </div>
     <div id='pane'>
         <nav>
