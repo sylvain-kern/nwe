@@ -11,6 +11,27 @@
         return $tasks;
     }
 
+    function get_users($file){
+        $data = json_decode(file_get_contents($file), true);
+        $users = array();
+        $count = 0;
+        foreach($data as $user => $scores){
+            if($user == 'default'){
+                continue;
+            }
+            $users[$count] = $user;
+            $count += 1;
+        }
+        return $users;
+    }
+
+    function convert($number, $from, $to, $changes){
+        $rate = $changes[$from][$to];
+        $scaled = $number * $rate;
+        // to be implemented : given a matrix of changes from task1 to task2, return the scaled number
+        return $scaled;
+    }
+
     function update_tasks_in_scores($task_file, $score_file){
         $tasks = get_tasks($task_file);
         $scores = json_decode(file_get_contents($score_file), true);

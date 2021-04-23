@@ -14,21 +14,21 @@
 </head>
 
 <body>
-<div id='pane'>
-<p>
-    <?php
-        // display the scores
-        include 'utils.php';
-        display_scores('data/scores.json');
-    ?>
-</p>
+    <div id='pane'>
+        <p>
+            <?php
+                // display the scores
+                include 'utils.php';
+                display_scores('data/scores.json');
+            ?>
+        </p>
 
-<footer>
-    <nav>
-        <ul>
-            <li><a href="index.php"> Return to homepage </a></li>
-        </ul>
-    </nav>
-</footer>
-</div>
+        <footer>
+            <nav>
+                <ul>
+                    <li><a href="index.php"> Return to homepage </a></li>
+                </ul>
+            </nav>
+        </footer>
+    </div>
 </body>

@@ -3,6 +3,7 @@
     $password = 'caonut';
     $data = json_decode(file_get_contents('data/scores.json'), true);
     $config = json_decode(file_get_contents('data/config.json'), true);
+    $rates = json_decode(file_get_contents('data/trading_rates.json'), true);
     $count = 0;
     foreach($data as $user => $scores){
         $count += 1;
@@ -20,9 +21,19 @@
                     $val[$task] = 0;
                     $new_data[$mate] = $val;
                 }
-                $config[$task] = array();
+                $config[$task] = array('default' => 1);
                 file_put_contents('data/scores.json', json_encode($new_data));
                 file_put_contents('data/config.json', json_encode($config, JSON_FORCE_OBJECT));
+                if(count($rates) == 0){
+                    $rates[$task] = array($task => 1);
+                }
+                else{
+                    foreach($rates as $from => &$to){
+                        $to[$task] = 1;
+                    }
+                    $rates[$task] = end($rates);
+                }
+                file_put_contents('data/trading_rates.json', json_encode($rates));
                 echo "New task ".$task." added for all users ! <br>";
             }
             if(strcmp($_POST["new_name"],'') != 0){
@@ -36,6 +47,22 @@
         else{
             echo "<div id='pane'> <center> Wrong password, try again. </center> </div>";
         }
+    }
+    // show data/configuration mode
+    if(isset($_POST["reset_one"])){
+        $class = 'visible';
+    }
+    else{
+        $class = 'hidden';
+    }
+    // reset all data
+    if(isset($_POST['reset_two'])){
+        $reset_config = array();
+        $reset_scores = array('default' => array());
+        $reset_trading_rates = array();
+        file_put_contents('data/config.json', json_encode($reset_config, JSON_FORCE_OBJECT));
+        file_put_contents('data/scores.json', json_encode($reset_scores, JSON_FORCE_OBJECT));
+        file_put_contents('data/trading_rates.json', json_encode($reset_trading_rates, JSON_FORCE_OBJECT));
     }
 ?>
 
@@ -57,10 +84,22 @@
 
         <form method='POST' action='admin.php'>
             <p> Admin password :<input type='text' name='password' /></p>
-        <p> Add a new roommate :<input type='text' name='new_name' /></p>
+            <p> Add a new roommate :<input type='text' name='new_name' /></p>
             <p> Add a new task :<input type='text' name='new_task' /></p>
             <p><input class='button' type='submit' name='submit' value='Submit' /></p>
         </form>
+
+        <form method='POST' action='admin.php'>
+            <input class='button' type='submit' name='reset_one' value='&#9888; Reset all &#9888;'/>
+        </form>
+        <?php
+            // display configuration mode
+            if($class == 'visible'){
+                echo "<form method='POST' action='admin.php'>";
+                echo "<p> <input class='button' type='submit' name='reset_two' value='Sure ?' /> </p>";
+                echo "</form>";
+            }
+        ?>
 
         <footer>
             <nav>

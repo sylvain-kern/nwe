@@ -23,7 +23,7 @@
     <div id="pane">
         <header>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <h1> <a href = "" > Roomm   ate equalizer </a> </h1>
+            <h1> <a href = "" > Roommate equalizer </a> </h1>
         </header>
         <p>
         <?php
@@ -49,12 +49,22 @@
             }
         ?>
     </div>
+
     <div id='pane'>
         <nav>
             <ul>
-                <li><a href="admin.php"> Enter admin page </a></li>
+                <li><a href="trade.php"> Enter trade page </a></li>
             </ul>
         </nav>
-    </div>
+
+    <footer>
+    <nav>
+        <ul>
+            <li><a href="admin.php"> Go to admin page </a></li>
+        </ul>
+    </nav>
+
+</div>
+</footer>
 </body>
 </html>

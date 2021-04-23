@@ -1,19 +1,12 @@
 <?php
+    include 'utils.php';
     $currentTask = file_get_contents('data/selected_task.txt');
+    $default_type = true;
     if($currentTask != ''){
-        $users = array();
-        // read the different users
+        $users = get_users('data/scores.json');
         $data = json_decode(file_get_contents('data/scores.json'), true);
         $global_conf = json_decode(file_get_contents('data/config.json'), true);  
         $conf = $global_conf[$currentTask];
-        $count = 0;
-        foreach($data as $user => $scores){
-            if($user == 'default'){
-                continue;
-            }
-            $users[$count] = $user;
-            $count += 1;
-        }
         // show data/configuration mode
         if(isset($_POST["conf_mod"])){
             $class = 'visible';
@@ -23,19 +16,25 @@
         }
         // process task done
         if(isset($_POST['submit_task'])){
-            if(!isset($_POST["person"]) || (!isset($_POST["type"]) && $_POST["person"]!="Guest")){
+            if(!isset($_POST["person"]) || (!isset($_POST["type"]) && $_POST["person"]!="Guest" && !$default_type)){
                 echo "Missing information";
             }
             else{
                 if($_POST["person"] != 'Guest'){
                     // get previous scores
                     $new_scores = array();
+                    if($default_type){
+                        $gain = $conf['default'];
+                    }
+                    else{
+                        $gain = $_POST["type"];
+                    }
                     foreach($data as $user => $scores){
                         if($user == 'default'){ // skip the default user
                             continue;
                         }
                         if($user == $_POST["person"]){ // if the user is the one who performed the task, give him the points
-                            $new_scores[$user] = $scores[$currentTask] + $_POST["type"];
+                            $new_scores[$user] = $scores[$currentTask] + $gain;
                         }
                         else{ // else no changes
                             $new_scores[$user] = $scores[$currentTask];
@@ -131,12 +130,15 @@
                 echo "<label for='Guest'> Guest </label><br/>";
                 echo "</fieldset> </p>";
                 // what type of task
-                echo "<p> <fieldset> <legend> What type of task ?</legend>";
-                foreach($conf as $type => $val){
-                    echo "<input type='radio' name='type' value='".$val."' id='".$type."'>";
-                    echo "<label for='".$type."'> ".$type." </label><br/>";
+                if(count($conf) > 1){
+                    echo "<p> <fieldset> <legend> What type of task ?</legend>";
+                    foreach($conf as $type => $val){
+                        echo "<input type='radio' name='type' value='".$val."' id='".$type."'>";
+                        echo "<label for='".$type."'> ".$type." </label><br/>";
+                    }
+                    echo "</fieldset> </p>";
+                    $default_type = false;
                 }
-                echo "</fieldset> </p>";
                 echo "<input class='button' type='submit' name='submit_task' value='Task done'/>";
                 echo "</form>";
             }
@@ -144,14 +146,11 @@
                 echo "<p> Task undefined, please configure. </p>";
             }
         ?>
+
         
-        <?php
-            // to enter configuration mode
-            echo "<form method='POST' action='task.php'>";
-        ?>
-
-        <input class='button' type='submit' name='conf_mod' value='&#128296 configuration mode'/> </form>
-
+        <form method='POST' action='task.php'>
+            <input class='button' type='submit' name='conf_mod' value='&#128296 configuration mode'/>
+        </form>
         <?php
             // display configuration mode
             if($class == 'visible'){
