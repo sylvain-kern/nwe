@@ -1,6 +1,7 @@
 <?php
     $url = file("data/url.txt");
     $score_file = 'data/scores.json';
+    $config_file = 'data/config.json';
     $temp_file = 'data/selected_task.txt';
     // reward display
     $dir = $url[array_rand($url)];
@@ -20,7 +21,7 @@
             <?php
                 // display the scores
                 include 'utils.php';
-                update_and_display_scores($score_file);
+                update_and_display_scores($score_file, $config_file);
             ?>
         </p>
 

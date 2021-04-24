@@ -61,13 +61,13 @@
         }
     }
 
-    function update_and_display_scores($score_file){
-        // used to update the scores and compute the right emoji before displaying them in a table, given the score file
+    function update_and_display_scores($score_file, $conf_file){
+        // used to update the scores and compute the right emoji before displaying them in a table, given the score and config file
         $data = json_decode(file_get_contents($score_file), true);
         $tasks = array();
         $smiles = array();
         $nbUsers = 0;
-        $nbTasks = 0;
+        $nbTasks = count(get_tasks($conf_file));
         // transpose the score matrix to obtain the _$tasks_ matrix and construct the default emoji matrix 
         foreach($data as $user => $scores){
             if($user == 'default'){ // skip the default user
@@ -76,29 +76,38 @@
             foreach($scores as $task => $val){
                 $tasks[$task][$user] = $val; // to obtain the scores of each user per task (transpose of $data)
                 $smiles[$task][$user] = "&#x26C5"; // by default, everybody got a cloud (emoji matrix)
-                $nbTasks += 1;
             }
             $nbUsers += 1;
         }
-        $nbTasks = $nbTasks/$nbUsers;
         // if there are more than one users and at least a task
         if($nbUsers>1 && $nbTasks>0){
             // compute the smiles for each task
             foreach($tasks as $task => $scores){
-                $max = max($scores);
-                $min = min($scores);
-                // best score got a sun
-                foreach(array_keys($scores, $max, true) as $user){
-                    if($user == 'default'){
-                        continue;
+                // everybody got a sun if every score is balanced
+                if(count(array_unique($scores)) == 1){
+                    foreach($scores as $user => $val){
+                        if($user == 'default'){
+                            continue;
+                        }
+                        $smiles[$task][$user] = "&#x1F31E";
                     }
-                    $smiles[$task][$user] = "&#x1F31E";
-                } // worst score got a poop
-                foreach(array_keys($scores, $min, true) as $user){
-                    if($user == 'default'){
-                        continue;
+                }
+                else{
+                    $max = max($scores);
+                    $min = min($scores);
+                    // best score got a sun
+                    foreach(array_keys($scores, $max, true) as $user){
+                        if($user == 'default'){
+                            continue;
+                        }
+                        $smiles[$task][$user] = "&#x1F31E";
+                    } // worst score got a poop
+                    foreach(array_keys($scores, $min, true) as $user){
+                        if($user == 'default'){
+                            continue;
+                        }
+                        $smiles[$task][$user] = "&#x1F4A9";
                     }
-                    $smiles[$task][$user] = "&#x1F4A9";
                 }
             }
             // display as a table

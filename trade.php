@@ -86,7 +86,7 @@
         <p>
             <?php
                 // display the scores
-                update_and_display_scores($score_file);
+                update_and_display_scores($score_file, $config_file);
             ?>
         </p>
 
