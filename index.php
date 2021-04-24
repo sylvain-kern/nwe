@@ -1,11 +1,16 @@
 <?php
+    // initialization
     include 'utils.php';
-    $tasks = get_tasks('data/config.json');
-    if(file_get_contents('data/selected_task.txt') != ''){
-        file_put_contents('data/selected_task.txt', '');
+    $config_file = 'data/config.json';
+    $score_file = 'data/scores.json';
+    $temp_file = 'data/selected_task.txt';
+    $tasks = get_tasks($config_file);
+    if(file_get_contents($temp_file) != ''){ // if a task was previously selected, erase it
+        file_put_contents($temp_file, '');
     }
+    // if a task is selected, save it in the temporary file and go to the *generic* task page
     if(isset($_POST['go_to_task']) && isset($_POST['task_name'])){
-        file_put_contents('data/selected_task.txt', $_POST['task_name']);
+        file_put_contents($temp_file, $_POST['task_name']);
         header('location: task.php');
     }
 ?>
@@ -28,10 +33,11 @@
         <p>
         <?php
             // display the scores
-            display_scores('data/scores.json');
+            update_and_display_scores($score_file);
         ?>
         </p>
         <?php
+            // display the available tasks
             if(count($tasks)>0){
                 // Task selection
                 echo "<form method='POST' action='index.php'>";

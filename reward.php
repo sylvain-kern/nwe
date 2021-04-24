@@ -1,15 +1,16 @@
 <?php
     $url = file("data/url.txt");
+    $score_file = 'data/scores.json';
+    $temp_file = 'data/selected_task.txt';
     // reward display
     $dir = $url[array_rand($url)];
     echo "<div id=pane> <center> Thanks!<br> </center>";
     echo "<center> <img src=\"$dir\" class='responsive-image'> </center> </div>";
-    file_put_contents('data/selected_task.txt', '');
+    file_put_contents($temp_file, ''); // erase the previous task reminder
 ?>
 
 <head>
     <title>&#x1F6BF Reward</title>
-    <!-- <link rel="stylesheet" type="text/css" href="/artos/style.css" media="screen"/> -->
     <link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
 </head>
 
@@ -19,7 +20,7 @@
             <?php
                 // display the scores
                 include 'utils.php';
-                display_scores('data/scores.json');
+                update_and_display_scores($score_file);
             ?>
         </p>
 

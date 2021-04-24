@@ -1,45 +1,49 @@
 <?php
+    // initialize variables
     include 'utils.php';
     $password = 'password';
-    $data = json_decode(file_get_contents('data/scores.json'), true);
-    $config = json_decode(file_get_contents('data/config.json'), true);
-    $rates = json_decode(file_get_contents('data/trading_rates.json'), true);
-    $count = 0;
-    foreach($data as $user => $scores){
-        $count += 1;
-    }
+    
+    $score_file = 'data/scores.json';
+    $config_file = 'data/config.json';
+    $trading_file = 'data/trading_rates.json';
+    // read the scores, tasks configurations and trading rates
+    $data = json_decode(file_get_contents($score_file), true);
+    $config = json_decode(file_get_contents($config_file), true);
+    $rates = json_decode(file_get_contents($trading_file), true);
     $nbtasks = count($config);
+    // when submit is clicked
     if(isset($_POST["submit"])){
-        // if there is a password and it is the good one (as a confirmation process)
+        // check if there is a password and it is the good one (as a confirmation process)
         if(isset($_POST["password"]) && $_POST["password"] == $password){
-            echo "<div id='pane'> <center> Password OK: <br>";
+            echo "<div id='pane'> <center> Password OK <br>";
+            // if a new task is being defined
             if(strcmp($_POST["new_task"],'') != 0){
                 $task = $_POST["new_task"];
-                $new_data = array();
-                foreach($data as $mate => $val){
-                    // assign a score of zero for each roommate
+                foreach($data as $mate => &$val){ // create a new score for each roommate with zero points
                     $val[$task] = 0;
-                    $new_data[$mate] = $val;
                 }
-                $config[$task] = array('default' => 1);
-                file_put_contents('data/scores.json', json_encode($new_data));
-                file_put_contents('data/config.json', json_encode($config, JSON_FORCE_OBJECT));
-                if(count($rates) == 0){
+                $config[$task] = array('default' => 1); // also create a new configuration with one 'default' type
+                // create the trading rates matrix
+                if(count($rates) == 0){ // if empty, create a 1x1 matrix with just the task
                     $rates[$task] = array($task => 1);
                 }
-                else{
+                else{ // if not empty, expend the matrix from NxN where N is the new count of taskss
                     foreach($rates as $from => &$to){
-                        $to[$task] = 1;
+                        $to[$task] = 1; // rate of one by default
                     }
                     $rates[$task] = end($rates);
                 }
-                file_put_contents('data/trading_rates.json', json_encode($rates));
+                // write the data and confirm the creation
+                file_put_contents($score_file, json_encode($data));
+                file_put_contents($config_file, json_encode($config, JSON_FORCE_OBJECT));
+                file_put_contents($trading_file, json_encode($rates));
                 echo "New task ".$task." added for all users ! <br>";
             }
+            // if a new roommate is being defined
             if(strcmp($_POST["new_name"],'') != 0){
                 $user = $_POST["new_name"];
-                $data[$user] = $data["default"];
-                file_put_contents('data/scores.json', json_encode($data, JSON_FORCE_OBJECT));
+                $data[$user] = $data["default"]; // just modify the scores with the 'default' template
+                file_put_contents($score_file, json_encode($data, JSON_FORCE_OBJECT));
                 echo "New user ".$user." added ! <br>";
             }
             echo "</center> </div>";
@@ -55,14 +59,16 @@
     else{
         $class = 'hidden';
     }
-    // reset all data
+    // to reset all data
     if(isset($_POST['reset_two'])){
         $reset_config = array();
+        // create the 'default' template for the scores
         $reset_scores = array('default' => array());
         $reset_trading_rates = array();
-        file_put_contents('data/config.json', json_encode($reset_config, JSON_FORCE_OBJECT));
-        file_put_contents('data/scores.json', json_encode($reset_scores, JSON_FORCE_OBJECT));
-        file_put_contents('data/trading_rates.json', json_encode($reset_trading_rates, JSON_FORCE_OBJECT));
+        // write the *empty* data 
+        file_put_contents($config_file, json_encode($reset_config, JSON_FORCE_OBJECT));
+        file_put_contents($score_file, json_encode($reset_scores, JSON_FORCE_OBJECT));
+        file_put_contents($trading_file, json_encode($reset_trading_rates, JSON_FORCE_OBJECT));
     }
 ?>
 
@@ -93,7 +99,7 @@
             <input class='button' type='submit' name='reset_one' value='&#9888; Reset all &#9888;'/>
         </form>
         <?php
-            // display configuration mode
+            // display configuration mode if needed
             if($class == 'visible'){
                 echo "<form method='POST' action='admin.php'>";
                 echo "<p> <input class='button' type='submit' name='reset_two' value='Sure ?' /> </p>";
@@ -114,5 +120,6 @@
 </html>
 
 <?php
-    update_tasks_in_scores('data/config.json', 'data/scores.json');
+    // in the end, always update the scores data given the tasks newly created
+    update_tasks_in_scores($config_file, $score_file);
 ?>

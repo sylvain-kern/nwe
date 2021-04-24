@@ -72,4 +72,4 @@ There are a few files in this repository:
 * the `.php` files which corresponds to all pages of the website (the main one being `index.php`),
 * the `style.css` file which corresponds to the graphic data for the pages,
 * the `data/` folder which contains the database of the site (`config.json` to store the data of all tasks, `scores.json` to store scores of each user for each task, `trading_rates.json` to store the trading rates between tasks, `url.txt` to store all rewards' url's and `selected_task.txt` which is mostly empty but temporary contains one line of information for the site to run),
-* the `readme_assets/` folder which contains all the images of this `README`. 
+* the `readme_assets/` folder which contains all the images of this `README`.

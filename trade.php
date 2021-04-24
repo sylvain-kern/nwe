@@ -2,30 +2,34 @@
     // initialize
     include 'utils.php';
     $score_file = 'data/scores.json';
-    $score = json_decode(file_get_contents($score_file), true);
     $config_file = 'data/config.json';
-    $trading_rates = json_decode(file_get_contents('data/trading_rates.json'), true);
+    $trading_file = 'data/trading_rates.json';
+    // read the data
+    $score = json_decode(file_get_contents($score_file), true);
+    $trading_rates = json_decode(file_get_contents($trading_file), true);
     $tasks = get_tasks($config_file);
     $users = get_users($score_file);
     if(count($users) == 0){
         // if there are no users, return to index
         header('location: index.php');
     }
-    // trading
+    // trading process
     if(isset($_POST['submit_trade'])){
         $points = $_POST['points_to_trade'];
+        // check if format is correct
         if(is_numeric($points)){
             $task_given = $_POST['task_to_be_given'];
             $task_receive = $_POST['task_to_receive'];
-            // check if selection is correct
+            // check if selection is correct (prevent trading from one task to the same)
             if($task_given != $task_receive){
                 $trader = $_POST['user_to_give'];
                 $score_of_trader = $score[$trader][$task_given];
+                // scale the score according to the trading rate
                 $scaled_points = convert($points, $task_given, $task_receive, $trading_rates);
                 // check if the user has enough points
                 if($score_of_trader >= $points){
-                    $score[$trader][$task_given] -= $points;
-                    $score[$trader][$task_receive] += $scaled_points;
+                    $score[$trader][$task_given] -= $points; // remove points
+                    $score[$trader][$task_receive] += $scaled_points; // add scaled points
                     file_put_contents($score_file, json_encode($score));
                     echo "<div id='pane'> <p> Points successfuly traded. </div> </p>";
                 }
@@ -48,15 +52,18 @@
     else{
         $class = 'hidden';
     }
+    // modify a rate
     if(isset($_POST['submit_modify_rate'])){
         $from_mod = $_POST['rate_from'];
         $to_mod = $_POST['rate_to'];
+        // prevent from modifying a rate between a task and herself
         if($from_mod != $to_mod){
             $new_rate = (float) $_POST['new_rate'];
+            // check if the format is correct and prevent from having a negative rate
             if(is_numeric($new_rate) &&  ($new_rate > 0)){
                 $trading_rates[$from_mod][$to_mod] = $new_rate;
-                $trading_rates[$to_mod][$from_mod] = 1/$new_rate;
-                file_put_contents('data/trading_rates.json', json_encode($trading_rates));
+                $trading_rates[$to_mod][$from_mod] = 1/$new_rate; // inverse the symmetrical rate
+                file_put_contents($trading_file, json_encode($trading_rates));
             }
             else{
                 echo "<div id='pane'> <p> Wrong format... </div> </p>";
@@ -79,11 +86,11 @@
         <p>
             <?php
                 // display the scores
-                display_scores($score_file);
+                update_and_display_scores($score_file);
             ?>
         </p>
 
-        <?php
+        <?php // display the trading options
             // who gives the points
             echo "<form method='POST' action='trade.php'>";
             echo "<label for='user_to_give'> User:</label>";
@@ -126,7 +133,7 @@
                 echo "<tr>";
                 echo "<td>".$from."</td>"; // write user's name
                 foreach($to as $val){
-                    echo "<td>".$val."</td>"; // trading score
+                    echo "<td>".$val."</td>"; // and trading score in each corresponding column
                 }
                 echo "</tr>";
             }
@@ -140,7 +147,7 @@
             // display configuration mode
             if($class == 'visible'){
                 echo "<h2> Settings : </h2>";
-                // modify rates
+                // modify rates from...
                 echo "<form method='POST' action='trade.php'>";
                 echo "<label for='rate_from'> Modify the rate from :</label>";
                 echo "<select name='rate_from' id='rate_from'>";
@@ -148,7 +155,7 @@
                     echo "<option value='".$task."'> ".$task." </option>";
                 }
                 echo "</select>";
-                echo "<form method='POST' action='trade.php'>";
+                // ... to ...
                 echo "<label for='rate_to'> to:</label>";
                 echo "<select name='rate_to' id='rate_to'>";
                 foreach($tasks as $task){
