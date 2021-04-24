@@ -62,7 +62,7 @@
             // check if the format is correct and prevent from having a negative rate
             if(is_numeric($new_rate) &&  ($new_rate > 0)){
                 $trading_rates[$from_mod][$to_mod] = $new_rate;
-                $trading_rates[$to_mod][$from_mod] = 1/$new_rate; // inverse the symmetrical rate
+                $trading_rates[$to_mod][$from_mod] = round(1/$new_rate, 2, PHP_ROUND_HALF_DOWN); // inverse the symmetrical rate
                 file_put_contents($trading_file, json_encode($trading_rates));
             }
             else{

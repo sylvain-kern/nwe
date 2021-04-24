@@ -12,17 +12,18 @@ After a task is performed, a reward is given.
 
 ## Install the app on your system
 
-This app is designed to be used in a web server. However, you can use it localy with tools like `Wampserver64` on Windows.
+This app is designed to be used in a web server. However, you can use it localy with tools like [Wampserver](https://sourceforge.net/projects/wampserver/files/) on Windows.
+After the tool is installed and launched, clone this repository on your app directory (for `Wampserver` users it would be something like `C:\wamp64\www\roommate-equalizer`) and search its adress with your favorite browser : `http://localhost/roommate-equalizer/index.php`.
 
 ## Getting started
 
 ### Create the dataset :
 
-If the database have not been cleared, you can `Go to admin page` then select `Reset All` and confirm it.
+If the database is not cleared, you can `Go to admin page` then select `Reset All` and confirm it.
 
 ![admin page](./readme_assets/admin.png)
 
-By default, the password is `password`, but you can change it by editing the `admin.php` file, third line --- it is needed to add new roommates or new tasks. To do so, just write the name of the roommate/task in the right area and click on `Submit`. A confirmation message will be displayed.
+By default, the password is `password`, but you can change it by editing the `admin.php` file, third line --- this password is needed to add new roommates or new tasks. To do so, just write the name of the roommate/task in the right area and click on `Submit`. A confirmation message will be displayed.
 
 ***Note: the scores will only be displayed if there are at least two users and one task.*** 
 
